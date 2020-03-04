@@ -12,7 +12,7 @@ typedef struct stringList {//Necessary simply because C doesn't have a String ty
 	char string[20];
 }stringList;
 
-int vertexCount (road *roadList,int roadAmount){//Uses the list of roads in order to count the amount of vertices/cities in the graph
+/*int vertexCount (road *roadList,int roadAmount){//Uses the list of roads in order to count the amount of vertices/cities in the graph
 	char currentString[20];
 	int vertexNum = 1;
 	stringList vertexList[roadAmount];
@@ -21,13 +21,15 @@ int vertexCount (road *roadList,int roadAmount){//Uses the list of roads in orde
 			vertexList[i].string[j] = '-';
 	strcpy(currentString,roadList[0].departureLocation);
 	strcpy(currentString,vertexList[0]);
-	for (int i = 0;i < roadAmount;i++){
-		if (strcmp(currentString,roadList[0].departureLocation)!=0){
-			//WIP - Code here will first compare currentString to all Strings in stringList. If there is no such String in the list, it will create one and break from the loop
+	for (int i = 0;i<roadAmount;i++){
+		if (strcmp(currentString,roadList.departureLocation[i]) != 0){
+			for (int j = 0;j<roadAmount<j++){
+
+			}
 		}
 	}
 	return vertexNum;
-}
+}*/
 
 int main(){
 	//File opening
@@ -43,11 +45,12 @@ int main(){
 	//Code necessary to read the very first line of the input file. At the time of writing all this code I had no idea it could be done with a simple fscanf. Bollocks
 	int roadAmount = 0;
 	char currentString[100];//Temporary storage space for strings
-	fgets (currentString,100,inputFile);
 	int i = 0;//Auxiliary number 01
 	int j = 0;//Auxiliary number 02
-	while (currentString[i] != '\\')
-		i++;
+	fscanf(inputFile,"%s",currentString);
+	for (i = 0;i<20;i++)
+		if (currentString[i]>56||currentString[i]<48)
+			break;
 	while (i>0){
 		roadAmount = roadAmount + (currentString[j]-48)*pow(10,i);
 		i--;
@@ -62,8 +65,9 @@ int main(){
 	for (i=0;i<roadAmount;i++){
 		fscanf(inputFile,"%s %s %s", roadList[i].departureLocation , roadList[i].arrivalLocation , currentString);
 		int aux = 0; //Aux int used to turn the String that determines distance into an int
-		while (currentString[j] != '\\')
-			j++;
+		for (j = 0;j<20;j++)
+			if (currentString[j]>56||currentString[j]<48)
+				break;
 		while (j>0){
 			roadList[i].distance = roadList[i].distance + (currentString[aux]-48)*pow(10,j);
 			j--;
@@ -83,6 +87,6 @@ int main(){
 	i=0;j=0;
 	fclose(inputFile);//File is no longer needed so it may be closed
 
-	int vertex = vertexCount(roadList,roadAmount);//Amount of vertices in the graph
-	printf("%d\n",vertex );
+	//int vertex = vertexCount(roadList,roadAmount);//Amount of vertices in the graph
+	//printf("%d\n",vertex );
 }
