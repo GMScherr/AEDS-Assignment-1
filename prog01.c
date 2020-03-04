@@ -8,17 +8,24 @@ typedef struct road {
 	int distance;
 } road;
 
+typedef struct stringList {//Necessary simply because C doesn't have a String type, thus making arrays of Strings not possible
+	char string[20];
+}stringList;
+
 int vertexCount (road *roadList,int roadAmount){//Uses the list of roads in order to count the amount of vertices/cities in the graph
 	char currentString[20];
 	int vertexNum = 1;
-	for (int i = 0;i<20;i++)
-		currentString[i]=roadList[0].departureLocation[i];//Copies the first city in the list into currentString
-	for (int i = 0;i<roadAmount;i++)
-		if (strcmp(roadList[i].departureLocation,currentString) != 0){//If the name of the departure location is different fromt the current name, a new city name has been found
-			vertexNum++;                                              //Note : this only works because of how the input file is structured, this is *not* a proper sorter and counter
-			for (int j = 0;j<20;j++)
-				currentString[j]=roadList[i].departureLocation[j];
+	stringList vertexList[roadAmount];
+	for (int i=0;i<roadAmount;i++)//Sets all strings to the name '----- ... -', simulating a NULL postion in the array
+		for (int j = 0;i<20;i++)
+			vertexList[i].string[j] = '-';
+	strcpy(currentString,roadList[0].departureLocation);
+	strcpy(currentString,vertexList[0]);
+	for (int i = 0;i < roadAmount;i++){
+		if (strcmp(currentString,roadList[0].departureLocation)!=0){
+			//WIP - Code here will first compare currentString to all Strings in stringList. If there is no such String in the list, it will create one and break from the loop
 		}
+	}
 	return vertexNum;
 }
 
@@ -65,9 +72,14 @@ int main(){
 		roadList[i].distance = roadList[i].distance/10;//The code to turn String to int was essentially copied from above and suffers from the same issue. Note to self : might as well turn it into a function
 	}
 
-	/*for (i = 0 ; i<roadAmount ; i++)
+	road currentJourney;//Reads the very last line in the file
+	fscanf(inputFile,"%s %s",currentJourney.departureLocation,currentJourney.arrivalLocation);
+	currentJourney.distance = -1;//Sets the distance between both cities as -1
+
+	for (i = 0 ; i<roadAmount ; i++)
 		printf("%s %s %d\n",roadList[i].departureLocation,roadList[i].arrivalLocation,roadList[i].distance );
-	printf("There are %d roads in this map\n",roadAmount );*/ //Commented code is used to prove that the program has successfully transfered all the info from the file to the struct array
+	printf("There are %d roads in this map\n",roadAmount ); //Commented code is used to prove that the program has successfully transfered all the info from the file to the struct array
+	printf("We are leaving %s, going to %s, which is %dkm away from here\n",currentJourney.departureLocation,currentJourney.arrivalLocation,currentJourney.distance );
 	i=0;j=0;
 	fclose(inputFile);//File is no longer needed so it may be closed
 
