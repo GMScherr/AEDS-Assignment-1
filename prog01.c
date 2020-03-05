@@ -5,6 +5,10 @@
 #define INFINITE 9999
 #define MAX 10
 
+//So far : code does not work. When passing the adjecencyMatrix to dijkstra();, the values of the variables change wildly.
+//Simply running this code will show that the adjacency matrix printed by main() and dijkstra() are different, despite no apparent reason.
+//An example of the phenomenom cited above can be found in this image : https://imgur.com/a/BjX1OOo
+
 typedef struct road {
     char departureLocation[20];
     char arrivalLocation[20];
@@ -16,6 +20,15 @@ typedef struct stringList {
 } stringList;
 
 void dijkstra(int G[MAX][MAX],int n,int startnode);
+
+/*int **Aloca_matriz(int lin, int col){//Original code from : https://github.com/PierreVieira/AEDS_I_C/blob/master/Distancia%20entre%20duas%20cidades.c
+    int **matriz;
+    matriz = malloc(sizeof(int*)*lin);
+    for (int i = 0; i < lin; ++i) {
+        matriz[i] = malloc(sizeof(int)*col);
+    }
+    return matriz;
+}*/
 
 int fetchDistance(stringList *vertexList,road *roadList,int roadAmount,int i,int j){//Fetches the distance in between the cities indicated by the index of i and j
     int returnValue;
@@ -82,8 +95,8 @@ int main(){
     char fileName[20];
     FILE *inputFile;
     printf("Digite o nome do arquivo de entrada: ");
-//	scanf("%s",fileName);
-    inputFile = fopen("test.txt","r");
+	scanf("%s",fileName);
+    inputFile = fopen(fileName,"r");
     if (!inputFile){
         printf("Specified file does not exist\n.");
         return 0;
@@ -137,6 +150,10 @@ int main(){
     printf("There are %d cities in the map\n",vertex );
 
     int adjacencyMatrix [vertex][vertex];
+
+    //int **adjacencyMatrix;
+    //adjacencyMatrix = Aloca_matriz(vertex,vertex); //An attempt has been made to salvage this code from Pierre's example (Code available at https://github.com/PierreVieira/AEDS_I_C/blob/master/Distancia%20entre%20duas%20cidades.c)
+                                                     //Unfortunately very much unsuccessful
     stringList vertexList[vertex];
     for (i=0;i<vertex;i++)
         for (j=0;j<20;j++)
@@ -163,15 +180,24 @@ int main(){
     }
 
     for (i = 0;i<vertex;i++)
-        if (strcmp(currentJourney.departureLocation,vertexList[i].string))
+        if (strcmp(currentJourney.departureLocation,vertexList[i].string)==0)
             break;
+    printf("%d\n",i);
 
     dijkstra(adjacencyMatrix,vertex,i);
 }
 
-void dijkstra(int G[MAX][MAX],int n,int startnode)
+void dijkstra(int G[MAX][MAX],int n,int startnode)//Code from https://www.thecrazyprogrammer.com/2014/03/dijkstra-algorithm-for-finding-shortest-path-of-a-graph.html
+                                                  //Note : the code does not work as is, for no apparent reason (So far).
 {
- 
+    
+        for (int i = 0;i<n;i++){
+        for ( int j = 0;j<n;j++){
+            printf("%d ",G[i][j]);
+        }
+        printf("\n");
+    }
+
     int cost[MAX][MAX],distance[MAX],pred[MAX];
     int visited[MAX],count,mindistance,nextnode,i,j;
     
