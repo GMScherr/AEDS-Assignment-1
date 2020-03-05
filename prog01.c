@@ -1,7 +1,9 @@
 #include <stdio.h>
-//#include <math.h>
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#define INFINITE 9999
+#define MAX 10
 
 typedef struct road {
     char departureLocation[20];
@@ -13,13 +15,20 @@ typedef struct stringList {
     char string[20];
 } stringList;
 
-int pow(int n1, int n2){//Faz n1 elvado a n2
-    int resultado = 1;
-    while(n2 > 0){
-        resultado *= n1;
-        n2--;
-    }
-    return resultado;
+void dijkstra(int G[MAX][MAX],int n,int startnode);
+
+int fetchDistance(stringList *vertexList,road *roadList,int roadAmount,int i,int j){//Fetches the distance in between the cities indicated by the index of i and j
+    int returnValue;
+    char departureString[20];
+    char arrivalString[20];
+    strcpy(departureString,vertexList[i].string);
+    strcpy(arrivalString,vertexList[j].string);
+    for (int i = 0;i<roadAmount;i++)
+        if (((strcmp(arrivalString,roadList[i].arrivalLocation)==0)&&(strcmp(departureString,roadList[i].departureLocation)==0))||((strcmp(arrivalString,roadList[i].departureLocation)==0)&&(strcmp(departureString,roadList[i].arrivalLocation)==0))){
+            returnValue = roadList[i].distance;
+            break;
+        }
+    return returnValue;
 }
 
 int stringSearch (stringList *vertexList,char *currentString,int vertex){//Returns 1 if vertexList does not contain currentString
@@ -134,7 +143,96 @@ int main(){
             vertexList[i].string[j] = '-';//Sets vertexList to "--------------------", as if it were a null String
     vertexListSet(vertexList,roadList,vertex,roadAmount);
 
-    for (i = 0;i<vertex;i++){
+    for (i = 0;i<vertex;i++)
         printf("%s\n",vertexList[i].string);
+
+    for (i = 0;i<vertex;i++){
+        for (j = 0;j<vertex;j++){
+            if (j == i)
+                adjacencyMatrix[i][j]=0;
+            else
+                adjacencyMatrix[i][j]=fetchDistance(vertexList,roadList,roadAmount,i,j);
+        }
+    }
+
+    for (i = 0;i<vertex;i++){
+        for (j = 0;j<vertex;j++){
+            printf("%d ",adjacencyMatrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (i = 0;i<vertex;i++)
+        if (strcmp(currentJourney.departureLocation,vertexList[i].string))
+            break;
+
+    dijkstra(adjacencyMatrix,vertex,i);
+}
+
+void dijkstra(int G[MAX][MAX],int n,int startnode)
+{
+ 
+    int cost[MAX][MAX],distance[MAX],pred[MAX];
+    int visited[MAX],count,mindistance,nextnode,i,j;
+    
+    //pred[] stores the predecessor of each node
+    //count gives the number of nodes seen so far
+    //create the cost matrix
+    for(i=0;i<n;i++)
+        for(j=0;j<n;j++)
+            if(G[i][j]==0)
+                cost[i][j]=INFINITE;
+            else
+                cost[i][j]=G[i][j];
+    
+    //initialize pred[],distance[] and visited[]
+    for(i=0;i<n;i++)
+    {
+        distance[i]=cost[startnode][i];
+        pred[i]=startnode;
+        visited[i]=0;
+    }
+    
+    distance[startnode]=0;
+    visited[startnode]=1;
+    count=1;
+    
+    while(count<n-1)
+    {
+        mindistance=INFINITE;
+        
+        //nextnode gives the node at minimum distance
+        for(i=0;i<n;i++)
+            if(distance[i]<mindistance&&!visited[i])
+            {
+                mindistance=distance[i];
+                nextnode=i;
+            }
+            
+            //check if a better path exists through nextnode            
+            visited[nextnode]=1;
+            for(i=0;i<n;i++)
+                if(!visited[i])
+                    if(mindistance+cost[nextnode][i]<distance[i])
+                    {
+                        distance[i]=mindistance+cost[nextnode][i];
+                        pred[i]=nextnode;
+                    }
+        count++;
+    }
+ 
+    //print the path and distance of each node
+    for(i=0;i<n;i++)
+        if(i!=startnode)
+        {
+            printf("\nDistance of node%d=%d",i,distance[i]);
+            printf("\nPath=%d",i);
+            
+            j=i;
+            do
+            {
+                j=pred[j];
+                printf("<-%d",j);
+            }while(j!=startnode);
     }
 }
